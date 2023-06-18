@@ -1,5 +1,5 @@
 <div align="center">
-    <img src="image2.png" alt="Logo" width="335"/>
+    <img src="images/image3.png" alt="Logo" width="335"/>
 
 
 <h1> Vision </h1>
@@ -8,6 +8,15 @@
 <br>
 
 </div>
+
+<div align="center">
+<h1> Usage </h1>
+
+<p> Input relevant news article or text </p>
+<img src="images/image.png" alt="Abstract" width="480"/>
+
+<p> Results </p>
+<img src="images/image2.png" alt="Results" width="480"/>
 
 <div align="center">
 <h1> Citations and Developement Resources </h1>
