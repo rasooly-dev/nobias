@@ -1,0 +1,48 @@
+.spectrum {
+    width: 100%;
+    height: 6px;
+
+    border-radius: 0.5rem;
+
+    overflow: hidden;
+
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+}
+
+.spectrum > .left {
+    width: 50%;
+    height: 100%;
+
+    background-color: rgb(0, 89, 255);
+}
+
+.thumb {
+    width: 0.75rem;
+    height: 0.75rem;
+
+    border-radius: 50%;
+
+    background-color: var(--dark);
+
+    position: absolute;
+}
+
+.spectrum > .right {
+    width: 50%;
+    height: 100%;
+
+    background-color: rgb(255, 21, 0);
+}
+
+.labels {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+
+    width: 100%;
+}
+
