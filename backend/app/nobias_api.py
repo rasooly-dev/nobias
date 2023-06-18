@@ -98,8 +98,8 @@ async def generate_props_endpoint(request: TextRequest):
 
     print("GENERATING POSITIVE AND NEGATIVE DATA")
     posneg = positiveNegative(text)
-    posnegVal = posneg[0]
-    posnegDetails = posneg[1]
+    posnegVal = posneg[1]
+    posnegDetails = posneg[0]
 
     print("GENERATING 3 PERSPECTIVE ARTICLES")
     posArticle = generate_positive_article(text)
