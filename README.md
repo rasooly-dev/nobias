@@ -1,17 +1,17 @@
-<p align="center">
+<div align="center">
     <img src="image2.png" alt="Logo" width="335"/>
-</p>
 
 
-<h1 style="text-align: center;"> Vision </h1>
+<h1> Vision </h1>
 
-<p align="center">Our goal is to enable consumers to access reliable information about news, media, journalism, or anything that may have inherent bias, which could hinder an objective approach to sharing information.</p><br>
+<p>Our goal is to enable consumers to access reliable information about news, media, journalism, or anything that may have inherent bias, which could hinder an objective approach to sharing information.</p><br>
 <br>
 
-</center>
+</div>
 
-
-<h1 style="text-align: center;"> Citations and Developement Resources </h1>
+<div align="center">
+<h1> Citations and Developement Resources </h1>
+</div>
 
 [OpenAI GPT-4](https://openai.com/) - enables the analysis of articles for summarization and political affiliation, enhancing comprehension and insight into their conten through prompt engineering. <br>
 <br>
