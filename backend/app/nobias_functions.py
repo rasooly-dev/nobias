@@ -12,8 +12,8 @@ from hume.models.config import LanguageConfig
 from pathlib import Path
 from typing import Any, Dict, List
 
-from positivenegative import *
-from political import *
+from .positivenegative import *
+from .political import *
 
 load_dotenv()
 hume_api_key = os.getenv("HUME_API_KEY")
