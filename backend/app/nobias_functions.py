@@ -5,7 +5,15 @@ import json
 import re
 import requests
 
+import numpy as np
+from dotenv import load_dotenv
+from hume import HumeBatchClient
+from hume.models.config import LanguageConfig
+from pathlib import Path
+from typing import Any, Dict, List
+
 load_dotenv()
+hume_api_key = os.getenv("HUME_API_KEY")
 api_key = os.getenv('OPENAI_API_KEY')
 openai.api_key = api_key
 API_ENDPOINT = "https://api.openai.com/v1/chat/completions"
@@ -41,19 +49,19 @@ def test_generation(prompt: str):
 
 def generate_info(text: str):
 	prompt = f"Given a piece of text, please generate a concise and unbiased summary of the content." \
-         f" Additionally, extract three statements from the text that can be fact-checked, and a good title." \
-         f" Please provide the response in JSON format." \
-         f"\n\nExample response format:" \
-         f"\n{{" \
-         f"\n    \"summary\": \"This is a summary of the text.\"," \
+		 f" Additionally, extract three statements from the text that can be fact-checked, and a good title." \
+		 f" Please provide the response in JSON format." \
+		 f"\n\nExample response format:" \
+		 f"\n{{" \
+		 f"\n    \"summary\": \"This is a summary of the text.\"," \
 	 	 f"\n    \"title\": \"This is a good title of the text.\"," \
-         f"\n    \"facts\": [" \
-         f"\n        \"Fact 1 statement.\"," \
-         f"\n        \"Fact 2 statement.\"," \
-         f"\n        \"Fact 3 statement.\"" \
-         f"\n    ]" \
-         f"\n}}" \
-         f"\n\nHere is the text to summarize and extract facts from:\n{text}"
+		 f"\n    \"facts\": [" \
+		 f"\n        \"Fact 1 statement.\"," \
+		 f"\n        \"Fact 2 statement.\"," \
+		 f"\n        \"Fact 3 statement.\"" \
+		 f"\n    ]" \
+		 f"\n}}" \
+		 f"\n\nHere is the text to summarize and extract facts from:\n{text}"
 	
 	data = {
 		"model": "gpt-4",
@@ -127,12 +135,12 @@ def generate_positive_article(text: str):
 	
 def generate_negative_article(text: str):
 	prompt = f"Given a piece of text, please generate a concise article using the content of the same length." \
-         f" Provide a negative perspective that acknowledges flaws influencing the topic." \
+		 f" Provide a negative perspective that acknowledges flaws influencing the topic." \
 		 f" Offer negative viewpoints critiquing the subject" \
-         f" Also, generate a title for the new article that highlights a nuanced viewpoint." \
-         f" Return the article in JSON format. Example below:\n" \
-         f"{{\"title\":\"example title\", \"text\":\"Example Unbiased Article\"}}\"" \
-         f"\n\nHere is the text to generate the article from:\n{text}"
+		 f" Also, generate a title for the new article that highlights a nuanced viewpoint." \
+		 f" Return the article in JSON format. Example below:\n" \
+		 f"{{\"title\":\"example title\", \"text\":\"Example Unbiased Article\"}}\"" \
+		 f"\n\nHere is the text to generate the article from:\n{text}"
 
 	data = {
 		"model": "gpt-4",
@@ -151,3 +159,98 @@ def generate_negative_article(text: str):
 		return json_resp
 	else:
 		raise Exception(f"Error {response.status_code}: {response.text}")
+	
+
+	## start generate emotion function
+def generate_emotions(text: str):
+
+	TEXT = text
+	file_path = "outtext.txt"
+
+	with open(file_path, "w") as fp:
+			fp.write(TEXT)
+
+	client = HumeBatchClient(hume_api_key)
+	config = LanguageConfig(granularity="conversational_turn")
+	job = client.submit_job(None, [config], files=[file_path])
+
+	print("running...", job)
+
+	job.await_complete()
+	print("Job completed with status: ", job.get_status)
+
+
+
+
+	emotion_embeddings = []
+	full_predictions = job.get_predictions()
+	for source in full_predictions:
+		predictions = source["results"]["predictions"]
+		for prediction in predictions:
+			language_predictions = prediction["models"]["language"]["grouped_predictions"]
+			for language_prediction in language_predictions:
+				for chunk in language_prediction["predictions"]:
+					emotion_embeddings.append(chunk["emotions"])
+				
+				
+
+
+	
+	class Stringifier:
+		RANGES = [(0.26, 0.35), (0.35, 0.44), (0.44, 0.53), (0.53, 0.62), (0.62, 0.71), (0.71, 10)]
+		ADVERBS = ["slightly", "somewhat", "moderately", "quite", "very", "extremely"]
+	
+		ADJECTIVES_48 = [
+			"admiring", "adoring", "appreciative", "amused", "angry", "anxious", "awestruck", "uncomfortable", "bored",
+			"calm", "focused", "contemplative", "confused", "contemptuous", "content", "hungry", "determined",
+			"disappointed", "disgusted", "distressed", "doubtful", "euphoric", "embarrassed", "disturbed", "entranced",
+			"envious", "excited", "fearful", "guilty", "horrified", "interested", "happy", "enamored", "nostalgic",
+			"pained", "proud", "inspired", "relieved", "smitten", "sad", "satisfied", "desirous", "ashamed",
+			"negatively surprised", "positively surprised", "sympathetic", "tired", "triumphant"
+		]
+	
+		ADJECTIVES_53 = [
+			"admiring", "adoring", "appreciative", "amused", "angry", "annoyed", "anxious", "awestruck", "uncomfortable",
+			"bored", "calm", "focused", "contemplative", "confused", "contemptuous", "content", "hungry", "desirous",
+			"determined", "disappointed", "disapproving", "disgusted", "distressed", "doubtful", "euphoric", "embarrassed",
+			"disturbed", "enthusiastic", "entranced", "envious", "excited", "fearful", "grateful", "guilty", "horrified",
+			"interested", "happy", "enamored", "nostalgic", "pained", "proud", "inspired", "relieved", "smitten", "sad",
+			"satisfied", "desirous", "ashamed", "negatively surprised", "positively surprised", "sympathetic", "tired",
+			"triumphant"
+		]
+	
+		@classmethod
+		def scores_to_text(cls, emotion_scores: List[float]) -> str:
+			if len(emotion_scores) == 48:
+				adjectives = cls.ADJECTIVES_48
+			elif len(emotion_scores) == 53:
+				adjectives = cls.ADJECTIVES_53
+			else:
+				raise ValueError(f"Invalid length for emotion_scores {len(emotion_scores)}")
+	
+	
+			# Return "neutral" if no emotions rate highly
+			if all(emotion_score < cls.RANGES[0][0] for emotion_score in emotion_scores):
+				return "neutral"
+	
+			# Construct phrases for all emotions that rate highly enough
+			phrases = [""] * len(emotion_scores)
+			for range_idx, (range_min, range_max) in enumerate(cls.RANGES):
+				for emotion_idx, emotion_score in enumerate(emotion_scores):
+					if range_min < emotion_score < range_max:
+						phrases[emotion_idx] = f"{cls.ADVERBS[range_idx]} {adjectives[emotion_idx]}"
+	
+			# Sort phrases by score
+			sorted_indices = np.argsort(emotion_scores)[::-1]
+			phrases = [phrases[i] for i in sorted_indices if phrases[i] != ""]
+	
+			# If there is only one phrase that rates highly, return it
+			if len(phrases) == 0:
+				return phrases[0]
+	
+	def get_top_emotions(emotions_list):
+		sorted_emotions = sorted(emotions_list[0], key=lambda x: x["score"], reverse=True)
+		top_emotions = sorted_emotions[:5]
+		return top_emotions
+	
+	return(get_top_emotions(emotion_embeddings))

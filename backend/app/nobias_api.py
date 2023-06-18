@@ -31,3 +31,8 @@ async def generate_neutral_article(text: str):
 async def generate_positive_article(text: str):
     json_resp = generate_positive_article(text)
     return json_resp
+
+@app.get("/generate_emotions")
+async def generate_emotions_endpoint(text: str):
+    resp = generate_emotions(text)
+    return {"results": resp}
