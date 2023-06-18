@@ -15,16 +15,12 @@ headers = {
 		"Authorization": f"Bearer {api_key}"
 	}
 
-
 def main():
 	print("Hello World")
 	print(test_generation("CalHacks"))
 
-
 def test_generation(prompt: str):
 	test_prompt = f"Write a sentence about {prompt}"
-
-	
 
 	data = {
 		"model": "gpt-4",
