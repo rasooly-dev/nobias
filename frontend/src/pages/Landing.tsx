@@ -2,14 +2,63 @@ import styles from './Landing.module.css'
 
 import { useState, useEffect } from 'react'
 
+import Panel from '../components/Panel/Panel'
+
+import Spectrum from '../components/Spectrum/Spectrum'
+import RangeBar from '../components/RangeBar/RangeBar'
+
 const Landing = () => {
 
     const [text, setText] = useState<string>('')
+
     const [loading, setLoading] = useState<boolean>(false)
+    const [results, setResults] = useState<any>(null)
 
     const handleSubmit = () => {
         console.log(text)
         setLoading(true)
+
+        setTimeout(() => {
+            setResults({
+                    score: 7.5,
+                    title: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+                    summary: `Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                        Nullam euismod, nisl eget aliquam ultricies, nunc nisl
+                        ultricies nunc, quis ultricies nisl nunc eget nisl.
+                        Suspendisse potenti. Nulla facilisi. Nulla facilisi.
+                        Nulla facilisi. Nulla facilisi. Nulla facilisi. Nulla
+                        facilisi. Nulla facilisi. Nulla facilisi. Nulla facilisi.`,
+                    politicalAffiliation: 50, // -100 to 100 (left to right)
+                    emotionalData: [
+                        {
+                            emotion: 'Anger',
+                            percentage: 0.5
+                        },
+                        {
+                            emotion: 'Joy',
+                            percentage: 0.3
+                        },
+                        {
+                            emotion: 'Sadness',
+                            percentage: 0.2
+                        }
+                    ],
+                    indepthAnalysis: `The author of the article wrote with emotion using words like "Ipsum" and "Dolor".
+                        This is a clear indication of bias. The author of the article wrote with emotion using words like "Ipsum" and "Dolor".
+                        This is a clear indication of bias. The author of the article wrote with emotion using words like "Ipsum" and "Dolor".
+                        Make sure to look out for the use of these words in the future.`,
+                    otherPerspective: `Lorem ipsum dolor sit amet, consectetur adipiscing elit. 
+                        Nullam euismod, nisl eget aliquam ultricies, nunc nisl ultricies nunc,
+                        quis ultricies nisl nunc eget nisl. Suspendisse potenti. Nulla facilisi.
+                        Nulla facilisi. Nulla facilisi. Nulla facilisi. Nulla facilisi. Nulla
+                        facilisi. Nulla facilisi. Nulla facilisi. Nulla facilisi. Nulla facilisi.
+                        Nulla facilisi. Nulla facilisi. Nulla facilisi. Nulla facilisi. Nulla
+                        facilisi. Nulla facilisi. Nulla facilisi. Nulla facilisi. Nulla facilisi.`
+            
+                }
+            )
+            setLoading(false)
+        }, 10000)
     }
 
     if (loading) {
@@ -27,6 +76,8 @@ const Landing = () => {
             </header>
 
             <main>
+                {(!results) ?
+                <>
                 <div className={styles.intro}>
                     <h2>Abstract</h2>
                     <p>
@@ -49,6 +100,10 @@ const Landing = () => {
                         onClick={handleSubmit}
                     >Get Started</button>
                 </div>
+                </>
+                :
+                <Results results={results} />
+                }
             </main>
         </div>
     )
@@ -106,6 +161,71 @@ const LoadingIcon = () => {
             <animateTransform attributeName="transform" type="rotate" repeatCount="indefinite" dur="1s" values="0 50 50;360 50 50" keyTimes="0;1"></animateTransform>
             </circle>
         </svg>
+    )
+}
+
+const Results = ({ results } : { results: any }) => {
+
+    const maxEmotionalNameWidth = results.emotionalData.reduce((max: number, emotion: any) => {
+        return Math.max(max, emotion.emotion.length)
+    }, 0)
+
+    console.log(maxEmotionalNameWidth)
+
+    return (
+        <div className={styles.results}>
+            <header>
+                <div className={styles.headline}>
+                    <h4>Title</h4>
+                    <h1>{results.title}</h1>
+                </div>
+                <div className={styles.score}>
+                    <h4>Score</h4>
+                    <h1>{results.score}/10</h1>
+                </div>
+            </header>
+
+            <div className={styles.panelGrid}>
+
+                <Panel style={{
+                    gridColumn: 'span 2'
+                }}>
+                    <h1>Summary</h1>
+                    <p>{results.summary}</p>
+                </Panel>
+
+                <Panel style={null}>
+                    <h1>Emotional Charge</h1>
+                    <p>Emotion is a powerful tool used by the media to influence the reader. The below graph shows the emotional charge of the article.</p>
+                    {results.emotionalData.map((emotion: any, i: number) => {
+                        return (
+                            <RangeBar key={i} val={emotion.percentage * 100} label={emotion.emotion + ' '.repeat(maxEmotionalNameWidth - emotion.emotion.length)} />
+                        )
+                    })}
+                </Panel>
+
+                <Panel style={null}>
+                    <h1>Political Bias</h1>
+                    <p>The below graph shows the political bias of the article. The closer the article is to the center, the more neutral it is. The further it is from the center, the more biased it is.</p>
+                    <Spectrum val={-50} />
+                </Panel>
+
+                <Panel style={{
+                    gridColumn: 'span 2'
+                }}>
+                    <h1>In Depth Analysis</h1>
+                    <p>{results.indepthAnalysis}</p>
+                </Panel>
+
+                <Panel style={{
+                    gridColumn: 'span 2'
+                }}>
+                    <h1>Another Perspective</h1>
+                    <p>{results.otherPerspective}</p>
+                </Panel>
+
+            </div>
+        </div>
     )
 }
 
