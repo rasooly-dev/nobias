@@ -217,8 +217,8 @@ const Results = ({ results } : { results: any }) => {
                             gap: '1rem'
                         }}
                     >
-                        <p>{results.positiveVNegative.val}</p>
-                        <ContrastingBar val={results.positiveVNegative.details} />
+                        <p>{results.positiveVNegative.details}</p>
+                        <ContrastingBar val={results.positiveVNegative.val} />
                     </div>
                 </Panel>
 
