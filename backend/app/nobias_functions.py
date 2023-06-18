@@ -45,11 +45,12 @@ def test_generation(prompt: str):
 
 def generate_info(text: str):
 	prompt = f"Given a piece of text, please generate a concise and unbiased summary of the content." \
-         f" Additionally, extract three statements from the text that can be fact-checked." \
+         f" Additionally, extract three statements from the text that can be fact-checked, and a good title." \
          f" Please provide the response in JSON format." \
          f"\n\nExample response format:" \
          f"\n{{" \
          f"\n    \"summary\": \"This is a summary of the text.\"," \
+	 	 f"\n    \"title\": \"This is a good title of the text.\"," \
          f"\n    \"facts\": [" \
          f"\n        \"Fact 1 statement.\"," \
          f"\n        \"Fact 2 statement.\"," \
@@ -75,4 +76,3 @@ def generate_info(text: str):
 		return json_resp
 	else:
 		raise Exception(f"Error {response.status_code}: {response.text}")
-
