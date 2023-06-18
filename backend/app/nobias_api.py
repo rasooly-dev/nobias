@@ -1,13 +1,25 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, File, HTTPException
 from pydantic import BaseModel
 from .nobias_functions import *
 from .political import *
 from .positivenegative import *
+from .linkreader import *
+from fastapi.middleware.cors import CORSMiddleware
+from mangum import Mangum
 
 app = FastAPI()
+handler = Mangum(app)
+app.add_middleware(
+	CORSMiddleware,
+	allow_origins=["*"],
+	allow_credentials=True,
+	allow_methods=["*"],
+	allow_headers=["*"]
+)
 
 class TextRequest(BaseModel):
     text: str
+    link: str
 
 @app.get("/")
 async def root():
@@ -50,9 +62,14 @@ async def generate_emotions_endpoint(request: TextRequest):
 
 @app.post("/generate_props")
 async def generate_props_endpoint(request: TextRequest):
-    request.text = request.text.replace('\n', ' ')
+    if not request.link:
+        text = request.link
+    if not request.text:
+        text = extract_main_article(request.link)
 
-    resp1 = generate_info(request.text)
+    text = text.replace('\n', ' ')
+
+    resp1 = generate_info(text)
     print(resp1)
     # strings
     title = resp1["title"]
@@ -60,26 +77,26 @@ async def generate_props_endpoint(request: TextRequest):
 
     # int 0 - 50 based on neutrality, 
     # political un-bias, context, objectivness
-    score = generate_score(request.text)
+    score = generate_score(text)
 
     # arr [{emotion: score}, {emotion: score}]
-    emotionalData = generate_emotions(request.text)
+    emotionalData = generate_emotions(text)
 
     # string, analysis
-    in_depth_analysis = generate_in_depth_analysis(request.text)
+    in_depth_analysis = generate_in_depth_analysis(text)
 
     # -100 to 100 poltical score
-    political = politicalAffiliation(request.text)
+    political = politicalAffiliation(text)
     politicalScore = political[0]
     politicalDetails = political[1]
 
-    posneg = positiveNegative(request.text)
+    posneg = positiveNegative(text)
     posnegVal = posneg[0]
     posnegDetails = posneg[1]
 
-    posArticle = generate_positive_article(request.text)
-    negArticle = generate_negative_article(request.text)
-    neutralArticle = generate_neutral_article(request.text)
+    posArticle = generate_positive_article(text)
+    negArticle = generate_negative_article(text)
+    neutralArticle = generate_neutral_article(text)
 
     return {"score": score,
             "title": title,
