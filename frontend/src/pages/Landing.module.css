@@ -140,3 +140,40 @@
     background-color: var(--primary);
     box-shadow: 0 4px 0.5rem rgba(0, 0, 0, 0.2);
 }
+
+.loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    gap: 1rem;
+
+    padding: 1rem;
+
+    width: 100vw;
+    height: 100vh;
+}
+
+.loading > h1 {
+    font-family: var(--font-family);
+    font-size: 1.75rem;
+    font-weight: 500;
+
+    color: var(--dark);
+}
+
+.loading > svg {
+    width: 4.5rem;
+    height: 4.5rem;
+
+    color: var(--primary);
+}
+
+.loading > p {
+    font-family: var(--font-family);
+    font-size: 0.9rem;
+    font-weight: 400;
+
+    color: var(--primary);
+}

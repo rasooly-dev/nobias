@@ -1,13 +1,19 @@
 import styles from './Landing.module.css'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
 const Landing = () => {
 
     const [text, setText] = useState<string>('')
+    const [loading, setLoading] = useState<boolean>(false)
 
     const handleSubmit = () => {
         console.log(text)
+        setLoading(true)
+    }
+
+    if (loading) {
+        return <Loading />
     }
 
     return (
@@ -55,5 +61,53 @@ const Logo = () => {
         </svg>
     )
 }
+
+const Loading = () => {
+
+    const loadingText = [
+        'Loading...',
+        'Politicians hate us!',
+        'We\'re not biased, we swear!',
+        'Crushing bad news one article at a time',
+        'Did you know that 99% of news is fake? or are we the fake news?',
+        'AI Calhacks 2023 going crazy'
+    ]
+
+    const [i, setI] = useState<number>(0)
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+            setI((i + 1) % loadingText.length)
+        }, 3000)
+
+        return () => clearInterval(interval)
+    }, [i])
+
+
+    return (
+        <div className={styles.loading}>
+            <LoadingIcon />
+            <h1>{loadingText[i]}</h1>
+            <p>Thank you for your patience, we will process and display your results shortly. </p>
+        </div>
+    )
+}
+
+const LoadingIcon = () => {
+    return (
+        <svg xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink" 
+        // style={{
+        //     margin: 'auto', 
+        //     background: 'rgb(255, 255, 255)', 
+        //     display: 'block', shape-rendering: 'auto'
+        // }} 
+            width="200px" height="200px" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid">
+            <circle cx="50" cy="50" fill="none" stroke="#424242" stroke-width="10" r="35" stroke-dasharray="164.93361431346415 56.97787143782138">
+            <animateTransform attributeName="transform" type="rotate" repeatCount="indefinite" dur="1s" values="0 50 50;360 50 50" keyTimes="0;1"></animateTransform>
+            </circle>
+        </svg>
+    )
+}
+
 
 export default Landing
