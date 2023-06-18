@@ -27,7 +27,7 @@
 
 .contrastingBarContainer > .contrastingBar {
     width: 20px;
-    height: 10rem;
+    height: max(10rem, 100%);
 
     border-radius: 0.25rem;
 

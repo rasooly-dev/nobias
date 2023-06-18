@@ -19,51 +19,30 @@ const Landing = () => {
     const handleSubmit = () => {
         console.log(text)
         console.log(link)
-        
+
         setLoading(true)
 
-        setTimeout(() => {
-            setResults({
-                    score: 7.5,
-                    title: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-                    summary: `Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                        Nullam euismod, nisl eget aliquam ultricies, nunc nisl
-                        ultricies nunc, quis ultricies nisl nunc eget nisl.
-                        Suspendisse potenti. Nulla facilisi. Nulla facilisi.
-                        Nulla facilisi. Nulla facilisi. Nulla facilisi. Nulla
-                        facilisi. Nulla facilisi. Nulla facilisi. Nulla facilisi.`,
-                    politicalAffiliation: 50, // -100 to 100 (left to right)
-                    emotionalData: [
-                        {
-                            emotion: 'Anger',
-                            percentage: 0.5
-                        },
-                        {
-                            emotion: 'Joy',
-                            percentage: 0.3
-                        },
-                        {
-                            emotion: 'Sadness',
-                            percentage: 0.2
-                        }
-                    ],
-                    indepthAnalysis: `The author of the article wrote with emotion using words like "Ipsum" and "Dolor".
-                        This is a clear indication of bias. The author of the article wrote with emotion using words like "Ipsum" and "Dolor".
-                        This is a clear indication of bias. The author of the article wrote with emotion using words like "Ipsum" and "Dolor".
-                        Make sure to look out for the use of these words in the future.`,
-                    otherPerspective: `Lorem ipsum dolor sit amet, consectetur adipiscing elit. 
-                        Nullam euismod, nisl eget aliquam ultricies, nunc nisl ultricies nunc,
-                        quis ultricies nisl nunc eget nisl. Suspendisse potenti. Nulla facilisi.
-                        Nulla facilisi. Nulla facilisi. Nulla facilisi. Nulla facilisi. Nulla
-                        facilisi. Nulla facilisi. Nulla facilisi. Nulla facilisi. Nulla facilisi.
-                        Nulla facilisi. Nulla facilisi. Nulla facilisi. Nulla facilisi. Nulla
-                        facilisi. Nulla facilisi. Nulla facilisi. Nulla facilisi. Nulla facilisi.`,
-                    
-                    positivePercentage: 50 // 0 to 100
-                }
-            )
+        fetch('http://127.0.0.1:8000/generate_props', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*'
+            },
+            body: JSON.stringify({
+                text: text,
+                link: link
+            })
+        })
+        .then(res => res.json())
+        .then(data => {
+            console.log(data)
+            setResults(data)
             setLoading(false)
-        }, 10000)
+        })
+        .catch(err => {
+            console.log(err)
+            setLoading(false)
+        })
     }
 
     if (loading) {
@@ -183,7 +162,7 @@ const LoadingIcon = () => {
 const Results = ({ results } : { results: any }) => {
 
     const maxEmotionalNameWidth = results.emotionalData.reduce((max: number, emotion: any) => {
-        return Math.max(max, emotion.emotion.length)
+        return Math.max(max, emotion.name.length)
     }, 0)
 
     console.log(maxEmotionalNameWidth)
@@ -197,7 +176,7 @@ const Results = ({ results } : { results: any }) => {
                 </div>
                 <div className={styles.score}>
                     <h4>Score</h4>
-                    <h1>{results.score}/10</h1>
+                    <h1>{(results.score * 2) / 10}/10</h1>
                 </div>
             </header>
 
@@ -215,19 +194,19 @@ const Results = ({ results } : { results: any }) => {
                     <p>Emotion is a powerful tool used by the media to influence the reader. The below graph shows the emotional charge of the article.</p>
                     {results.emotionalData.map((emotion: any, i: number) => {
                         return (
-                            <RangeBar key={i} val={emotion.percentage * 100} label={emotion.emotion + ' '.repeat(maxEmotionalNameWidth - emotion.emotion.length)} />
+                            <RangeBar key={i} val={emotion.score * 100} label={emotion.name + ' '.repeat(maxEmotionalNameWidth - emotion.name.length)} />
                         )
                     })}
                 </Panel>
 
                 <Panel style={null}>
                     <h1>Political Bias</h1>
-                    <p>The below graph shows the political bias of the article. The closer the article is to the center, the more neutral it is. The further it is from the center, the more biased it is.</p>
-                    <Spectrum val={-50} />
+                    <p>{results.politicalAffiliation.details}</p>
+                    <Spectrum val={results.politicalAffiliation.val} />
                 </Panel>
 
                 <Panel style={null}>
-                        <h1>Positive vs. Negative</h1>
+                    <h1>Positive vs. Negative</h1>
 
                     <div
                         style={{
@@ -238,8 +217,8 @@ const Results = ({ results } : { results: any }) => {
                             gap: '1rem'
                         }}
                     >
-                        <p>Lorum ipsum dolor sit amet, consectetur adipiscing elit. Nullam euismod, nisl eget aliquam ultricies, nunc nisl aliquet nunc, quis aliquam nisl nunc eu nisl. </p>
-                        <ContrastingBar val={results.positivePercentage} />
+                        <p>{results.positiveVNegative.val}</p>
+                        <ContrastingBar val={results.positiveVNegative.details} />
                     </div>
                 </Panel>
 
@@ -253,8 +232,15 @@ const Results = ({ results } : { results: any }) => {
                 <Panel style={{
                     gridColumn: 'span 2'
                 }}>
-                    <h1>Another Perspective</h1>
-                    <p>{results.otherPerspective}</p>
+                    <h1>Other perspectives</h1>
+                    {results.perspectives.map((perspective: any, i: number) => {
+                        return (
+                            <div key={i}>
+                                <h2>{perspective.title}</h2>
+                                <p>{perspective.text}</p>
+                            </div>
+                        )
+                    })}
                 </Panel>
 
             </div>
