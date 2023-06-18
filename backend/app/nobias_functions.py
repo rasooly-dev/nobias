@@ -260,8 +260,8 @@ def generate_emotions(text: str):
 
 def get_context_score(text: str):
 	prompt = f"Provide a single integer score from 0 to 15, where 0" \
-		f"represents extreme bias and 15 represents utmost neutrality. Provide nothing else, just a SINGLE INTEGER." \
-		f"For example: 15" \
+		f"represents extreme bias and 25 represents utmost neutrality. Provide nothing else, just a SINGLE INTEGER." \
+		f"For example: 25" \
 		f"\n\nHere is the text to generate the article from:\n{text}"
 
 	data = {
@@ -302,14 +302,14 @@ def generate_score(text: str):
 
 	def political_bias_analysis():
 		spectrum_val = political_res[0]
-		bias_score = 15 - abs(spectrum_val) * 15 / 100
+		bias_score = 25 - abs(spectrum_val) * 25 / 100
 		return bias_score
 	
 	pos_neg_score = int(neutrality_analysis())
 	political_score = int(political_bias_analysis())
 	context_score = int(context_res)
 
-	final_score = pos_neg_score + political_score + context_score
+	final_score = political_score + context_score
 	return final_score
 
 	
