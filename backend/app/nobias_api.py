@@ -69,31 +69,39 @@ async def generate_props_endpoint(request: TextRequest):
 
     text = text.replace('\n', ' ')
 
+    print("\n\nGENEARTING TITLE AND SUMMARY\n\n")
     resp1 = generate_info(text)
     print(resp1)
     # strings
+
     title = resp1["title"]
     summary = resp1["summary"]
 
+    print("\n\nGENERATING SCORE\n\n")
     # int 0 - 50 based on neutrality, 
     # political un-bias, context, objectivness
     score = generate_score(text)
 
+    print("\n\nGENERATING EMOTIONAL DATA\n\n")
     # arr [{emotion: score}, {emotion: score}]
     emotionalData = generate_emotions(text)
 
     # string, analysis
+    print("\n\nGENERATING ANALYSIS")
     in_depth_analysis = generate_in_depth_analysis(text)
 
     # -100 to 100 poltical score
+    print("GENERATING POLITCAL DATA")
     political = politicalAffiliation(text)
     politicalScore = political[0]
     politicalDetails = political[1]
 
+    print("GENERATING POSITIVE AND NEGATIVE DATA")
     posneg = positiveNegative(text)
     posnegVal = posneg[0]
     posnegDetails = posneg[1]
 
+    print("GENERATING 3 PERSPECTIVE ARTICLES")
     posArticle = generate_positive_article(text)
     negArticle = generate_negative_article(text)
     neutralArticle = generate_neutral_article(text)
