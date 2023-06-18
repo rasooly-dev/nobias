@@ -72,7 +72,7 @@ def generate_info(text: str):
 			{"role": "system", "content": "You are a helpful assistant."},
 			{"role": "user", "content": prompt}
 		],
-		"max_tokens": 1000
+		"max_tokens": 5000
 	}
 
 	response = requests.post(API_ENDPOINT, headers=headers, data=json.dumps(data))
@@ -85,10 +85,10 @@ def generate_info(text: str):
 		raise Exception(f"Error {response.status_code}: {response.text}")
 
 def generate_neutral_article(text: str):
-	prompt = f"Given a piece of text, please generate a concise and unbiased article using the content of the same length." \
+	prompt = f"Given a piece of text, please generate a concise and unbiased one paragraph article using the content of the same length." \
 			f" Avoid overly negative words."\
 			f" Also generate a title for the new unbiased objective article."\
-			f" Return the article in a JSON format. Example below:\n"\
+			f" Return the article in JSON format parsable by the json.loads() function in python. Example below:\n"\
 			f"{{\"title\":\"example title\", \"text\":\"Example Unbiased Article\"}}"\
 			f"\n\nHere is the text to generate the unbiased article from:\n{text}"
 	
@@ -98,23 +98,24 @@ def generate_neutral_article(text: str):
 			{"role": "system", "content": "You are a helpful assistant."},
 			{"role": "user", "content": prompt}
 		],
-		"max_tokens": 1000
+		"max_tokens": 5000
 	}
 
 	response = requests.post(API_ENDPOINT, headers=headers, data=json.dumps(data))
 
 	if response.status_code == 200:
 		resp = response.json()["choices"][0]["message"]["content"]
+		resp = resp.replace('\n', ' ')
 		json_resp = json.loads(resp)
 		return json_resp
 	else:
 		raise Exception(f"Error {response.status_code}: {response.text}")
 	
 def generate_positive_article(text: str):
-	prompt = f"Given a piece of text, please generate a concise article using the content of the same length." \
+	prompt = f"Given a piece of text, please generate a concise one-paragraph article using the content of the same length." \
 			f" Ensure the article portrays a positive and understanding perspective." \
 			f" Also, generate a title for the new article that highlights the positive aspects." \
-			f" Return the article in JSON format. Example below:\n" \
+			f" Return the article in JSON format parsable by the json.loads() function in python. Example below:\n" \
 			f"{{\"title\":\"example title\", \"text\":\"Example Unbiased Article\"}}\"" \
 			f"\n\nHere is the text to generate the unbiased article from:\n{text}"
 	
@@ -124,13 +125,14 @@ def generate_positive_article(text: str):
 			{"role": "system", "content": "You are a helpful assistant."},
 			{"role": "user", "content": prompt}
 		],
-		"max_tokens": 1000
+		"max_tokens": 5000
 	}
 
 	response = requests.post(API_ENDPOINT, headers=headers, data=json.dumps(data))
 
 	if response.status_code == 200:
 		resp = response.json()["choices"][0]["message"]["content"]
+		resp = resp.replace('\n', ' ')
 		json_resp = json.loads(resp)
 		return json_resp
 	else:
@@ -141,7 +143,7 @@ def generate_negative_article(text: str):
 		 f" Provide a negative perspective that acknowledges flaws influencing the topic." \
 		 f" Offer negative viewpoints critiquing the subject" \
 		 f" Also, generate a title for the new article that highlights a nuanced viewpoint." \
-		 f" Return the article in JSON format. Example below:\n" \
+		 f" Return the article in a JSON format. Example below:\n" \
 		 f"{{\"title\":\"example title\", \"text\":\"Example Unbiased Article\"}}\"" \
 		 f"\n\nHere is the text to generate the article from:\n{text}"
 
@@ -158,7 +160,11 @@ def generate_negative_article(text: str):
 
 	if response.status_code == 200:
 		resp = response.json()["choices"][0]["message"]["content"]
-		json_resp = json.loads(resp)
+		print(resp)
+		resp = resp.replace('\n', ' ')
+		print('\n\n\n')
+		print(resp)
+		json_resp = json.loads(resp, strict=False)
 		return json_resp
 	else:
 		raise Exception(f"Error {response.status_code}: {response.text}")
@@ -315,7 +321,7 @@ def generate_in_depth_analysis(text: str):
 			{"role": "system", "content": "You are a helpful assistant."},
 			{"role": "user", "content": prompt}
 		],
-		"max_tokens": 1000
+		"max_tokens": 10000
 	}
 
 	response = requests.post(API_ENDPOINT, headers=headers, data=json.dumps(data))
