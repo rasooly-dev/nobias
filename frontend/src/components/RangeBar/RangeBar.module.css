@@ -1,0 +1,45 @@
+.rangeBarContainer {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    
+    gap: 1rem;
+
+    width: 100%;
+}
+.rangeBarContainer > .label > pre {
+    /* font-family: var(--font-family); */
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.9rem;
+    font-weight: 400;
+
+    color: var(--dark);
+}
+
+.rangeBarContainer > .rangeBar {
+    width: 100%;
+
+    height: 6px;
+
+    border-radius: 0.5rem;
+
+    overflow: hidden;
+
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+
+    background-color: var(--secondary);
+}
+
+.rangeBarContainer > .rangeBar > .tab {
+    background-color: var(--primary);
+
+    height: 6px;
+
+    z-index: 999;
+    position: absolute;
+
+    border-radius: 0.5rem;
+}
