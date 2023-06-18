@@ -12,6 +12,9 @@ from hume.models.config import LanguageConfig
 from pathlib import Path
 from typing import Any, Dict, List
 
+from positivenegative import *
+from political import *
+
 load_dotenv()
 hume_api_key = os.getenv("HUME_API_KEY")
 api_key = os.getenv('OPENAI_API_KEY')
@@ -179,9 +182,6 @@ def generate_emotions(text: str):
 	job.await_complete()
 	print("Job completed with status: ", job.get_status)
 
-
-
-
 	emotion_embeddings = []
 	full_predictions = job.get_predictions()
 	for source in full_predictions:
@@ -192,10 +192,6 @@ def generate_emotions(text: str):
 				for chunk in language_prediction["predictions"]:
 					emotion_embeddings.append(chunk["emotions"])
 				
-				
-
-
-	
 	class Stringifier:
 		RANGES = [(0.26, 0.35), (0.35, 0.44), (0.44, 0.53), (0.53, 0.62), (0.62, 0.71), (0.71, 10)]
 		ADVERBS = ["slightly", "somewhat", "moderately", "quite", "very", "extremely"]
@@ -254,3 +250,81 @@ def generate_emotions(text: str):
 		return top_emotions
 	
 	return(get_top_emotions(emotion_embeddings))
+
+def get_context_score(text: str):
+	prompt = f"Please analyze the following context and provide a single integer score from 0 to 15, where 0" \
+		f"represents extreme bias and 15 represents utmost neutrality" \
+		f"\n\nHere is the text to generate the article from:\n{text}"
+
+	data = {
+		"model": "gpt-4",
+		"messages": [
+			{"role": "system", "content": "You are a helpful assistant."},
+			{"role": "user", "content": prompt}
+		],
+		"max_tokens": 50
+	}
+
+	response = requests.post(API_ENDPOINT, headers=headers, data=json.dumps(data))
+
+	if response.status_code == 200:
+		resp = response.json()["choices"][0]["message"]["content"]
+		return resp
+	else:
+		raise Exception(f"Error {response.status_code}: {response.text}")
+
+def generate_score(text: str):
+	"""
+	Rubric (out of 50): 
+	20 pts: neutrality of tone
+	15 pts: political bias
+	15 pts: context (explanation on why)
+	"""
+
+	pos_neg_res = positiveNegative(text)
+	political_res = politicalAffiliation(text)
+	context_res = get_context_score(text)
+
+	# TODO: fix neutrality, ask emir
+	def neutrality_analysis():
+		spectrum_val = pos_neg_res[0]
+		neutrality_score = 20 - abs(spectrum_val - 50) * 20 / 50
+		return neutrality_score
+
+	def political_bias_analysis():
+		spectrum_val = political_res[0]
+		bias_score = 15 - abs(spectrum_val) * 15 / 100
+		return bias_score
+	
+	pos_neg_score = int(neutrality_analysis())
+	political_score = int(political_bias_analysis())
+	context_score = int(context_res)
+
+	final_score = pos_neg_score + political_score + context_score
+	return final_score
+
+	
+def generate_in_depth_analysis(text: str):
+	prompt = f"Please generate an in depth analysis about the article given" \
+		f"It should explain in depth about" \
+		f"\n\nHere is the text to generate the article from:\n{text}"
+
+	data = {
+		"model": "gpt-4",
+		"messages": [
+			{"role": "system", "content": "You are a helpful assistant."},
+			{"role": "user", "content": prompt}
+		],
+		"max_tokens": 1000
+	}
+
+	response = requests.post(API_ENDPOINT, headers=headers, data=json.dumps(data))
+
+	if response.status_code == 200:
+		resp = response.json()["choices"][0]["message"]["content"]
+		return resp
+	else:
+		raise Exception(f"Error {response.status_code}: {response.text}")
+
+	
+	

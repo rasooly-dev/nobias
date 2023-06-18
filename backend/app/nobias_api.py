@@ -1,5 +1,7 @@
 from fastapi import FastAPI
 from .nobias_functions import *
+from .political import *
+from .positivenegative import *
 
 app = FastAPI()
 
@@ -36,3 +38,31 @@ async def generate_positive_article(text: str):
 async def generate_emotions_endpoint(text: str):
     resp = generate_emotions(text)
     return {"results": resp}
+
+@app.get("generate_props")
+async def generate_props(text: str):
+    resp1 = generate_info(text)
+    
+    # strings
+    title = resp1[title]
+    summary = resp1[summary]
+
+    # int 0 - 50 based on neutrality, 
+    # political un-bias, context, objectivness
+    score = generate_score(text)
+
+    # arr [{emotion: score}, {emotion: score}]
+    emotionalData = generate_emotions(text)
+
+    # string, analysis
+    in_depth_analysis = generate_in_depth_analysis(text)
+
+    # -100 to 100 poltical score
+    politicalScore = politicalAffiliation(text)[0]
+
+    return {"score": score,
+            "title": title,
+            "summary": summary,
+            "politicalAffiliation": politicalScore,
+            "emotionalData": emotionalData,
+            "indepthAnalysis": in_depth_analysis}
