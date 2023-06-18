@@ -1,9 +1,13 @@
 from fastapi import FastAPI
+from pydantic import BaseModel
 from .nobias_functions import *
 from .political import *
 from .positivenegative import *
 
 app = FastAPI()
+
+class TextRequest(BaseModel):
+    text: str
 
 @app.get("/")
 async def root():
@@ -15,28 +19,28 @@ async def test_generation_endpoint(prompt: str):
     return {"message": resp}
 
 @app.get("/generate_info")
-async def generate_info_endpoint(text: str):
-    json_resp = generate_info(text)
+async def generate_info_endpoint(request: TextRequest):
+    json_resp = generate_info(request.text)
     return json_resp
 
 @app.get("/generate_negative_article")
-async def generate_negative_article_endpoint(text: str):
-    json_resp = generate_negative_article(text)
+async def generate_negative_article_endpoint(request: TextRequest):
+    json_resp = generate_negative_article(request.text)
     return json_resp
 
 @app.get("/generate_neutral_article")
-async def generate_neutral_article_endpoint(text: str):
-    json_resp = generate_neutral_article(text)
+async def generate_neutral_article_endpoint(request: TextRequest):
+    json_resp = generate_neutral_article(request.text)
     return json_resp
 
 @app.get("/generate_positive_article")
-async def generate_positive_article_endpoint(text: str):
-    json_resp = generate_positive_article(text)
+async def generate_positive_article_endpoint(request: TextRequest):
+    json_resp = generate_positive_article(request.text)
     return json_resp
 
 @app.get("/generate_emotions")
-async def generate_emotions_endpoint(text: str):
-    resp = generate_emotions(text)
+async def generate_emotions_endpoint(request: TextRequest):
+    resp = generate_emotions(request.text)
     return {"results": resp}
 
 @app.get("/generate_props")
