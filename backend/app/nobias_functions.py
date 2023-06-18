@@ -284,9 +284,8 @@ def get_context_score(text: str):
 def generate_score(text: str):
 	"""
 	Rubric (out of 50): 
-	20 pts: neutrality of tone
-	15 pts: political bias
-	15 pts: context (explanation on why)
+	25 pts: political bias
+	25 pts: context (explanation on why)
 	"""
 
 	pos_neg_res = positiveNegative(text)
