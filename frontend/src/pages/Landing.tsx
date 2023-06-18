@@ -11,12 +11,15 @@ import ContrastingBar from '../components/ContrastingBar/ContrastingBar'
 const Landing = () => {
 
     const [text, setText] = useState<string>('')
+    const [link, setLink] = useState<string>('')
 
     const [loading, setLoading] = useState<boolean>(false)
     const [results, setResults] = useState<any>(null)
 
     const handleSubmit = () => {
         console.log(text)
+        console.log(link)
+        
         setLoading(true)
 
         setTimeout(() => {
@@ -96,6 +99,17 @@ const Landing = () => {
                         onChange={(e) => setText(e.target.value)}
                         placeholder="Start by pasting a news article or excerpt here..."
                         rows={15}
+                    />
+
+                    <div className={styles.or}>
+                        <div className={styles.line}></div>
+                        <p>OR</p>
+                        <div className={styles.line}></div>
+                    </div>
+
+                    <input
+                        onChange={(e) => setLink(e.target.value)}
+                        placeholder="Enter a link to a news article or excerpt..."
                     />
 
                     <button
