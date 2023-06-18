@@ -68,7 +68,7 @@ def generate_info(text: str):
 		 f"\n\nHere is the text to summarize and extract facts from:\n{text}"
 	
 	data = {
-		"model": "gpt-4",
+		"model": "gpt-3.5-turbo-16k",
 		"messages": [
 			{"role": "system", "content": "You are a helpful assistant."},
 			{"role": "user", "content": prompt}
@@ -80,7 +80,7 @@ def generate_info(text: str):
 
 	if response.status_code == 200:
 		resp = response.json()["choices"][0]["message"]["content"]
-		json_resp = json.loads(resp)
+		json_resp = json.loads(resp.replace('\n', ' '))
 		return json_resp
 	else:
 		raise Exception(f"Error {response.status_code}: {response.text}")
@@ -296,6 +296,7 @@ def generate_score(text: str):
 	# TODO: fix neutrality, ask emir
 	def neutrality_analysis():
 		spectrum_val = pos_neg_res[0]
+
 		neutrality_score = 20 - abs(spectrum_val - 50) * 20 / 50
 		return neutrality_score
 

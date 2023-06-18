@@ -63,7 +63,7 @@ async def generate_emotions_endpoint(request: TextRequest):
 @app.post("/generate_props")
 async def generate_props_endpoint(request: TextRequest):
     if not request.link:
-        text = request.link
+        text = request.text
     if not request.text:
         text = extract_main_article(request.link)
 
@@ -119,8 +119,25 @@ async def generate_props_endpoint(request: TextRequest):
             },
             "emotionalData": emotionalData,
             "indepthAnalysis": in_depth_analysis,
-            "perspectives": {
+            "perspectives1": {
                 "positive": posArticle,
                 "negative": negArticle,
                 "neutral": neutralArticle
-            }}
+            },
+            "perspectives": [
+                {
+                    "type": 'positive',
+                    "text": posArticle["text"],
+                    "title": posArticle["title"]
+                },
+                {
+                    "type": 'negative',
+                    "text": negArticle["text"],
+                    "title": negArticle["title"]
+                },
+                {
+                    "type": 'neutral',
+                    "text": neutralArticle["text"],
+                    "title": neutralArticle["title"]
+                }
+            ]}
