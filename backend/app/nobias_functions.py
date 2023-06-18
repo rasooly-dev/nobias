@@ -17,6 +17,7 @@ from .political import *
 
 load_dotenv()
 hume_api_key = os.getenv("HUME_API_KEY")
+print(f"\n\n\n{hume_api_key}\n\n\n")
 api_key = os.getenv('OPENAI_API_KEY')
 openai.api_key = api_key
 API_ENDPOINT = "https://api.openai.com/v1/chat/completions"
@@ -258,8 +259,9 @@ def generate_emotions(text: str):
 	return(get_top_emotions(emotion_embeddings))
 
 def get_context_score(text: str):
-	prompt = f"Please analyze the following context and provide a single integer score from 0 to 15, where 0" \
-		f"represents extreme bias and 15 represents utmost neutrality" \
+	prompt = f"Provide a single integer score from 0 to 15, where 0" \
+		f"represents extreme bias and 15 represents utmost neutrality. Provide nothing else, just a SINGLE INTEGER." \
+		f"For example: 15" \
 		f"\n\nHere is the text to generate the article from:\n{text}"
 
 	data = {
@@ -312,7 +314,7 @@ def generate_score(text: str):
 	
 def generate_in_depth_analysis(text: str):
 	prompt = f"Please generate an in depth analysis about the article given" \
-		f"It should explain in depth about" \
+		f"Make it analytical, but not too extremely long, maybe a nice paragraph." \
 		f"\n\nHere is the text to generate the article from:\n{text}"
 
 	data = {
@@ -321,7 +323,7 @@ def generate_in_depth_analysis(text: str):
 			{"role": "system", "content": "You are a helpful assistant."},
 			{"role": "user", "content": prompt}
 		],
-		"max_tokens": 10000
+		"max_tokens": 5000
 	}
 
 	response = requests.post(API_ENDPOINT, headers=headers, data=json.dumps(data))

@@ -30,7 +30,7 @@ def positiveNegative(givenText):
 
     \"\"\"{givenText}\"\"\"
     """
-    num = int(get_completion(prompt1))
+    num = int(float(get_completion(prompt1)))
 
     prompt2 = f"""
     You will be provided with text delimited by triple quotes. 
