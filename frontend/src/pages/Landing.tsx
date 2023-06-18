@@ -6,6 +6,7 @@ import Panel from '../components/Panel/Panel'
 
 import Spectrum from '../components/Spectrum/Spectrum'
 import RangeBar from '../components/RangeBar/RangeBar'
+import ContrastingBar from '../components/ContrastingBar/ContrastingBar'
 
 const Landing = () => {
 
@@ -53,8 +54,9 @@ const Landing = () => {
                         Nulla facilisi. Nulla facilisi. Nulla facilisi. Nulla facilisi. Nulla
                         facilisi. Nulla facilisi. Nulla facilisi. Nulla facilisi. Nulla facilisi.
                         Nulla facilisi. Nulla facilisi. Nulla facilisi. Nulla facilisi. Nulla
-                        facilisi. Nulla facilisi. Nulla facilisi. Nulla facilisi. Nulla facilisi.`
-            
+                        facilisi. Nulla facilisi. Nulla facilisi. Nulla facilisi. Nulla facilisi.`,
+                    
+                    positivePercentage: 50 // 0 to 100
                 }
             )
             setLoading(false)
@@ -157,7 +159,7 @@ const LoadingIcon = () => {
         //     display: 'block', shape-rendering: 'auto'
         // }} 
             width="200px" height="200px" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid">
-            <circle cx="50" cy="50" fill="none" stroke="#424242" stroke-width="10" r="35" stroke-dasharray="164.93361431346415 56.97787143782138">
+            <circle cx="50" cy="50" fill="none" stroke="#424242" strokeWidth="10" r="35" strokeDasharray="164.93361431346415 56.97787143782138">
             <animateTransform attributeName="transform" type="rotate" repeatCount="indefinite" dur="1s" values="0 50 50;360 50 50" keyTimes="0;1"></animateTransform>
             </circle>
         </svg>
@@ -210,8 +212,25 @@ const Results = ({ results } : { results: any }) => {
                     <Spectrum val={-50} />
                 </Panel>
 
+                <Panel style={null}>
+                        <h1>Positive vs. Negative</h1>
+
+                    <div
+                        style={{
+                            display: 'flex',
+                            flexDirection: 'row',
+                            alignItems: 'center',
+                            justifyContent: 'space-between',
+                            gap: '1rem'
+                        }}
+                    >
+                        <p>Lorum ipsum dolor sit amet, consectetur adipiscing elit. Nullam euismod, nisl eget aliquam ultricies, nunc nisl aliquet nunc, quis aliquam nisl nunc eu nisl. </p>
+                        <ContrastingBar val={results.positivePercentage} />
+                    </div>
+                </Panel>
+
                 <Panel style={{
-                    gridColumn: 'span 2'
+                    // gridRow: 'span 3'
                 }}>
                     <h1>In Depth Analysis</h1>
                     <p>{results.indepthAnalysis}</p>
