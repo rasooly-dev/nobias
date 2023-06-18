@@ -1,7 +1,9 @@
 import openai
 import json
 import os
+from dotenv import load_dotenv
 
+load_dotenv()
 openai.api_key = os.getenv('OPENAI_API_KEY')
 
 def get_completion(prompt, model="gpt-4"):
@@ -13,7 +15,7 @@ def get_completion(prompt, model="gpt-4"):
     )
     return response.choices[0].message["content"]
 
-def politicalAffilitation(givenText):
+def politicalAffiliation(givenText):
 
     prompt = f"""
     You will be provided with text delimited by triple quotes. 
@@ -23,6 +25,7 @@ def politicalAffilitation(givenText):
     keeping in mind that if the text associates a negative perspective of the right or rightist politicians/parties, it is most likely leftist and 
     if the text associates a negative perspective of the left or leftist politicians/parties, it is most likely rightist  
 
+    return a single number
 
     \"\"\"{givenText}\"\"\"
     """
@@ -31,4 +34,5 @@ def politicalAffilitation(givenText):
     print("Completion for Text 1:")
     print(response)
 
-    return response
+    return int(response)
+
