@@ -13,12 +13,11 @@
 <h1> Usage </h1>
 
 <p> Input relevant news article or text </p>
-<div>
-    <img src="nobias/images/demo1.gif" alt="Abstract"/>
-</div>
+<img src="https://github.com/rasooly-dev/nobias/blob/2ee256fe95bacdd3b13d0ddef1d5d46c7c4144c6/images/demo1.gif" alt="Abstract"/>
 
-<p> Results </p>
-<img src="nobias/images/demo2.gif" alt="Results"/>
+
+<p> ---------------------------------------------------------------------------------------------------------------- </p>
+<img src="https://github.com/rasooly-dev/nobias/blob/2ee256fe95bacdd3b13d0ddef1d5d46c7c4144c6/images/demo2.gif" alt="Results"/>
 
 <div align="center">
 <h1> Citations and Developement Resources </h1>
