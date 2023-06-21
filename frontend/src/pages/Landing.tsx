@@ -22,7 +22,7 @@ const Landing = () => {
 
         setLoading(true)
 
-        fetch('http://127.0.0.1:8000/generate_props', {
+        fetch('http://127.0.0.1:8000/generate_props',{
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

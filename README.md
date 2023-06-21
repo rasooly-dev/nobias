@@ -13,10 +13,12 @@
 <h1> Usage </h1>
 
 <p> Input relevant news article or text </p>
-<img src="images/image.png" alt="Abstract" width="480" height="380"/>
+<div>
+    <img src="nobias/images/demo1.gif" alt="Abstract"/>
+</div>
 
 <p> Results </p>
-<img src="images/image2.png" alt="Results" width="960"/>
+<img src="nobias/images/demo2.gif" alt="Results"/>
 
 <div align="center">
 <h1> Citations and Developement Resources </h1>

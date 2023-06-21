@@ -9,9 +9,14 @@ from mangum import Mangum
 
 app = FastAPI()
 handler = Mangum(app)
+
+origins = [
+    "http://localhost:5173",  # Replace with the URL of your React app
+]
+
 app.add_middleware(
 	CORSMiddleware,
-	allow_origins=["*"],
+	allow_origins=origins,
 	allow_credentials=True,
 	allow_methods=["*"],
 	allow_headers=["*"]
